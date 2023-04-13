@@ -1,1 +1,1 @@
-# gophercises
+# gophercises-quiz
