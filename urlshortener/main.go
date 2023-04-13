@@ -4,13 +4,17 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/AkifhanIlgaz/gophercises/urlshortener/urlshort"
 )
 
 func main() {
-	yaml := flag.String("yaml", "", "Path to yaml file of path to urls")
-
+	yamlFile := flag.String("yaml", "", "Path to yaml file of path to urls")
+	yaml, err := os.ReadFile(*yamlFile)
+	if err != nil {
+		fmt.Errorf("Unable to read yaml file")
+	}
 	mux := defaultMux()
 
 	pathsToUrls := map[string]string{
@@ -19,7 +23,7 @@ func main() {
 	}
 	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 
-	yamlHandler, err := urlshort.YAMLHandler([]byte(*yaml), mapHandler)
+	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
 	if err != nil {
 		panic(err)
 	}
