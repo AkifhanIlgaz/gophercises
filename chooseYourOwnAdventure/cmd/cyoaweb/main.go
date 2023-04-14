@@ -3,44 +3,31 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/AkifhanIlgaz/gophercises/chooseYourOwnAdventure/cyoa"
 )
 
-var storyArcs map[string]cyoa.Chapter
-
 func main() {
-	storyPath := flag.String("story", "./gopher.json", "Path to the story file")
-	if storyPath == nil {
-		fmt.Errorf("Story file path is required")
-		os.Exit(1)
-	}
+	port := flag.Int("port", 8080, "The port to start the CYOA web application on")
+	fileName := flag.String("file", "gopher.json", "Path to the story file")
 	flag.Parse()
 
-	st, err := cyoa.GetChapters(*storyPath)
+	f, err := os.Open(*fileName)
 	if err != nil {
-		fmt.Errorf("Unable to read story file: %v", err)
+		panic(err)
 	}
 
-	storyArcs = st
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", arcHandler)
-
-	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", mux)
-
-}
-
-func arcHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	chosenArc := r.URL.Path
-	arc := storyArcs[chosenArc[1:]]
-	if chosenArc == "/" {
-		arc = storyArcs["intro"]
+	story, err := cyoa.JSONGetStory(f)
+	if err != nil {
+		panic(err)
 	}
-	// send response with html template
-	fmt.Fprint(w, arc)
+
+	h := cyoa.NewHandler(story)
+	addr := fmt.Sprintf(":%d", *port)
+
+	fmt.Printf("Starting the server on port: %d", *port)
+	log.Fatal(http.ListenAndServe(addr, h))
 }
