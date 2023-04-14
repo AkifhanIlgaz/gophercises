@@ -15,7 +15,7 @@ func init() {
 
 var templ *template.Template
 
-const defaultHandleTemplate = `
+var defaultHandleTemplate = `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -85,12 +85,16 @@ const defaultHandleTemplate = `
 </html>
 `
 
-func NewHandler(s Story) http.Handler {
-	return handler{s}
+func NewHandler(s Story, t *template.Template) http.Handler {
+	if t == nil {
+		t = templ
+	}
+	return handler{s, t}
 }
 
 type handler struct {
-	s Story
+	s     Story
+	templ *template.Template
 }
 
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
