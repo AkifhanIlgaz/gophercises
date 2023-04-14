@@ -15,7 +15,7 @@ func main() {
 			Accept multiple files
 			Accept links
 	*/
-	file := flag.String("file", "tests/ex1.html", "File to parse")
+	file := flag.String("file", "testFiles/ex1.html", "File to parse")
 	flag.Parse()
 
 	f, err := os.Open(*file)
@@ -23,10 +23,7 @@ func main() {
 		fmt.Errorf("unable to open file: %v", err)
 	}
 
-	links, err := parser.Parse(f)
-	if err != nil {
-		fmt.Errorf("unable to parse file: %v", err)
-	}
+	links := parser.Parse(f)
 
 	fmt.Printf("%+v", links)
 

@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -13,12 +14,12 @@ type Link struct {
 }
 
 // Parse takes path to a HTML document and returns a slice of links parsed from it.
-func Parse(r io.Reader) ([]Link, error) {
+func Parse(r io.Reader) []Link {
 	// Create new document from r using goquery
 	doc, err := goquery.NewDocumentFromReader(r)
 	if err != nil {
-		fmt.Println("Unable to create new document from reader: ")
-		return nil, err
+		fmt.Println(err)
+
 	}
 
 	// Find all a tags
@@ -29,11 +30,19 @@ func Parse(r io.Reader) ([]Link, error) {
 		if !exists {
 			href = ""
 		}
-		text := s.Text()
+
+		// sb.WriteString(strings.TrimSpace(s.Text()))
+
+		// Get the text of the link
+		// s.Children().Each(func(i int, s *goquery.Selection) {
+		// 	sb.WriteString(strings.TrimSpace(s.Text()))
+		// })
+
+		text := strings.Join(strings.Fields(s.Text()), " ")
 
 		links = append(links, Link{href, text})
 
 	})
 
-	return links, nil
+	return links
 }
