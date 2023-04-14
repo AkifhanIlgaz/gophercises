@@ -85,16 +85,26 @@ var defaultHandleTemplate = `
 </html>
 `
 
-func NewHandler(s Story, t *template.Template) http.Handler {
-	if t == nil {
-		t = templ
+type HandleOption func(h *handler)
+
+func WithTemplate(t *template.Template) HandleOption {
+	return func(h *handler) {
+		h.t = t
 	}
-	return handler{s, t}
+}
+
+func NewHandler(s Story, opts ...HandleOption) http.Handler {
+	h := handler{s, templ}
+	for _, opt := range opts {
+		opt(&h)
+	}
+
+	return h
 }
 
 type handler struct {
-	s     Story
-	templ *template.Template
+	s Story
+	t *template.Template
 }
 
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +116,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path = path[1:]
 
 	if chapter, ok := h.s[path]; ok {
-		err := templ.Execute(w, chapter)
+		err := h.t.Execute(w, chapter)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Something went wrong.", http.StatusInternalServerError)
