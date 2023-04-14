@@ -1,30 +1,33 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"net/url"
 	"os"
-
-	"github.com/AkifhanIlgaz/gophercises/link-parser/parser"
 )
 
 func main() {
 	/*
 		TODO:
-		1. File flag to specify the file to parse
-			Accept multiple files
-			Accept links
+		1. Accept multiple files
+		2. Accept URLS
+		3. Add testing for edge cases
 	*/
-	file := flag.String("file", "testFiles/ex1.html", "File to parse")
-	flag.Parse()
 
-	f, err := os.Open(*file)
+	files := os.Args[1:]
+
+	_, err := url.ParseRequestURI(files[0])
 	if err != nil {
-		fmt.Errorf("unable to open file: %v", err)
+		fmt.Println(err)
 	}
+	
+	// f, err := os.Open(files[0])
+	// if err != nil {
+	// 	fmt.Errorf("unable to open file: %v", err)
+	// }
 
-	links := parser.Parse(f)
+	// links := parser.Parse(f)
 
-	fmt.Printf("%+v", links)
+	// fmt.Printf("%+v", links)
 
 }
