@@ -11,8 +11,6 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/boltdb/bolt v1.3.1 // indirect
-	golang.org/x/sys v0.7.0 // indirect
 )
 
 replace urlshort => ./urlshortener/handler/
