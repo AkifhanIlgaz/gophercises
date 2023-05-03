@@ -1,10 +1,11 @@
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
 import "github.com/AkifhanIlgaz/gophercises/task/cmd"
 
-//    ~/.bashrc
-//export PATH="~/go/bin:$PATH"
-
 func main() {
-	cmd.RootCommand.Execute()
+	cmd.Execute()
 }
