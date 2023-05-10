@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/binary"
+	"fmt"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -45,6 +46,58 @@ func CreateTask(task string) (int, error) {
 	}
 
 	return id, nil
+}
+
+func AllTasks() ([]Task, error) {
+	tasks := []Task{}
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(taskBucket)
+
+		c := b.Cursor()
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			tasks = append(tasks, Task{
+				Key:   btoi(k),
+				Value: string(v),
+			})
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return tasks, nil
+}
+
+// Reads a single Task from DB. We won't use this function for our app
+func ReadTask(id int) (Task, error) {
+	var task = Task{
+		Key: id,
+	}
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(taskBucket)
+		val := b.Get(itob(id))
+		if val == nil {
+			return fmt.Errorf("Task cannot found")
+		}
+
+		task.Value = string(val)
+		return nil
+	})
+
+	if err != nil {
+		return Task{
+			Key:   -1,
+			Value: "",
+		}, err
+	}
+
+	return task, nil
 }
 
 func itob(v int) []byte {
