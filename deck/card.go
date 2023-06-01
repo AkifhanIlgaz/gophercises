@@ -7,8 +7,6 @@ import (
 	"math/rand"
 	"sort"
 	"time"
-
-	"golang.org/x/exp/rand"
 )
 
 type Suit uint8
@@ -112,4 +110,16 @@ func Shuffle(cards []Card) []Card {
 	}
 
 	return ret
+}
+
+func Jokers(n int) func([]Card) []Card {
+	return func(cards []Card) []Card {
+		for i := 0; i < n; i++ {
+			cards = append(cards, Card{
+				Rank: Rank(i),
+				Suit: Joker,
+			})
+		}
+		return cards
+	}
 }
