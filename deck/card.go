@@ -4,7 +4,11 @@ package deck
 
 import (
 	"fmt"
+	"math/rand"
 	"sort"
+	"time"
+
+	"golang.org/x/exp/rand"
 )
 
 type Suit uint8
@@ -97,4 +101,15 @@ func Less(cards []Card) func(i, j int) bool {
 
 func absRank(c Card) int {
 	return int(c.Suit)*int(maxRank) + int(c.Rank)
+}
+
+func Shuffle(cards []Card) []Card {
+	ret := make([]Card, len(cards))
+	r := rand.New(rand.NewSource(time.Now().UnixMilli()))
+
+	for i, j := range r.Perm(len(cards)) {
+		ret[i] = cards[j]
+	}
+
+	return ret
 }
