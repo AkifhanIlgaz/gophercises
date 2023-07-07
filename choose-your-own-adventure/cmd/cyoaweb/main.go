@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/AkifhanIlgaz/gophercises/chooseYourOwnAdventure/cyoa"
+	"github.com/AkifhanIlgaz/gophercises/choose-your-own-adventure/cyoa"
 )
 
 func main() {
